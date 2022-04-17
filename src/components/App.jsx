@@ -49,11 +49,46 @@ class App extends Component {
     });
   };
 
-  openModal = e => {
-    this.setState({
-      isOpen: true,
-      imageForModal: { src: e.target.dataset.src, alt: e.target.alt },
-    });
+  openModal = (e, index) => {
+    if (e) {
+      this.setState({
+        isOpen: true,
+        imageForModal: { src: e.target.dataset.src, alt: e.target.alt },
+      });
+      return;
+    }
+
+    if (index) {
+      const object = this.state.hits.find((el, i) => i === index);
+      this.setState({
+        imageForModal: { src: object.largeImageURL, alt: object.tags },
+      });
+      return;
+    }
+  };
+
+  nextImage = () => {
+    const element = this.state.hits.findIndex(
+      el => el.largeImageURL === this.state.imageForModal.src
+    );
+
+    if (element !== this.state.hits.length - 1) {
+      this.openModal(false, element + 1);
+    } else {
+      this.openModal(false, 0);
+    }
+  };
+
+  prevImage = () => {
+    const element = this.state.hits.findIndex(
+      el => el.largeImageURL === this.state.imageForModal.src
+    );
+
+    if (element !== 0) {
+      this.openModal(false, element - 1);
+    } else {
+      this.openModal(false, this.state.hits.length - 1);
+    }
   };
 
   closeModal = () => {
@@ -77,9 +112,13 @@ class App extends Component {
           <Modal
             image={this.state.imageForModal}
             closeModal={this.closeModal}
+            nextImage={this.nextImage}
+            prevImage={this.prevImage}
           />
         ) : null}
-        {!!this.state.hits.length && <Button onClick={this.loadMore} />}
+        {api.totalHits <= this.state.page * 12 ? null : (
+          <Button onClick={this.loadMore} />
+        )}
         {this.state.loading && <Loader />}
       </>
     );

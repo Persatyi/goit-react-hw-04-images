@@ -1,5 +1,6 @@
 import s from './Modal.module.css';
 import { Component } from 'react';
+import { HiArrowLeft, HiArrowRight } from 'react-icons/hi';
 
 class Modal extends Component {
   componentDidMount() {
@@ -23,12 +24,18 @@ class Modal extends Component {
   };
 
   render() {
-    const { image } = this.props;
+    const { image, nextImage, prevImage } = this.props;
     const { src, alt } = image;
     return (
       <div className={s.overlay} onClick={this.closeModalByClick}>
+        <button onClick={prevImage} className={s.arrowLeft}>
+          <HiArrowLeft />
+        </button>
+        <button onClick={nextImage} className={s.arrowRight}>
+          <HiArrowRight />
+        </button>
         <div className={s.modal}>
-          <img src={src} alt={alt} width="800px" />
+          <img className={s.img} src={src} alt={alt} width="800px" />
         </div>
       </div>
     );

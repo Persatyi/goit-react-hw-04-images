@@ -15,3 +15,34 @@
   max-width: calc(100vw - 48px);
   max-height: calc(100vh - 24px);
 }
+
+.img {
+  transform: scale(1);
+  transition: transform 250ms linear;
+}
+
+.arrowRight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  fill: gray;
+  position: absolute;
+  top: 50%;
+  right: 100px;
+  width: 50px;
+  height: 50px;
+  border: transparent;
+  border-radius: 50%;
+  opacity: 0.5;
+  transition: all 250ms linear;
+}
+
+.arrowRight:hover {
+  fill: #fff;
+  opacity: 1;
+}
+
+.arrowLeft {
+  composes: arrowRight;
+  left: 100px;
+}

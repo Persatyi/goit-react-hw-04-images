@@ -5,7 +5,7 @@ axios.defaults.baseURL = 'https://pixabay.com/api/';
 class ApiService {
   #API_KEY = '25733485-485cb9dd944de62854e3a0445';
   page = 1;
-  searchQuery = '';
+  totalHits = 1;
 
   async fetchPicturesBySearchQuery(query) {
     try {
@@ -14,6 +14,9 @@ class ApiService {
           this.page
         }&key=${this.#API_KEY}`
       );
+
+      this.totalHits = response.data.totalHits;
+
       return response.data.hits.map(
         ({ id, webformatURL, largeImageURL, tags }) => ({
           id,
