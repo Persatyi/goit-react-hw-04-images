@@ -28,7 +28,7 @@
   fill: gray;
   position: absolute;
   top: 50%;
-  right: 100px;
+  right: 5%;
   width: 50px;
   height: 50px;
   border: transparent;
@@ -44,5 +44,5 @@
 
 .arrowLeft {
   composes: arrowRight;
-  left: 100px;
+  left: 5%;
 }

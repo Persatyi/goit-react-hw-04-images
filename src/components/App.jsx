@@ -58,8 +58,8 @@ class App extends Component {
       return;
     }
 
-    if (index) {
-      const object = this.state.hits.find((el, i) => i === index);
+    if (index || index === 0) {
+      const object = this.state.hits[index];
       this.setState({
         imageForModal: { src: object.largeImageURL, alt: object.tags },
       });
@@ -68,24 +68,24 @@ class App extends Component {
   };
 
   nextImage = () => {
-    const element = this.state.hits.findIndex(
+    const elementIndex = this.state.hits.findIndex(
       el => el.largeImageURL === this.state.imageForModal.src
     );
 
-    if (element !== this.state.hits.length - 1) {
-      this.openModal(false, element + 1);
+    if (elementIndex !== this.state.hits.length - 1) {
+      this.openModal(false, elementIndex + 1);
     } else {
       this.openModal(false, 0);
     }
   };
 
   prevImage = () => {
-    const element = this.state.hits.findIndex(
+    const elementIndex = this.state.hits.findIndex(
       el => el.largeImageURL === this.state.imageForModal.src
     );
 
-    if (element !== 0) {
-      this.openModal(false, element - 1);
+    if (elementIndex !== 0) {
+      this.openModal(false, elementIndex - 1);
     } else {
       this.openModal(false, this.state.hits.length - 1);
     }
