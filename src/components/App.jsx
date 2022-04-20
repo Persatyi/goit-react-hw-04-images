@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect, useReducer } from 'react';
 import Searchbar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Modal from 'components/Modal/Modal';
@@ -6,8 +6,8 @@ import Button from 'components/Button/Button';
 import api from 'components/Services/pictureApi';
 import Loader from 'components/Loader/Loader';
 
-class App extends Component {
-  state = {
+export default function App() {
+  const initialState = {
     value: '',
     page: 1,
     hits: [],
@@ -16,113 +16,138 @@ class App extends Component {
     loading: false,
   };
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.value !== this.state.value) {
-      this.findPicture();
-    }
+  const constantTypes = {
+    value: 'VALUE',
+    page: 'PAGE',
+    hits: 'HITS',
+    isOpen: 'ISOPEN',
+    imageForModal: 'IMAGEFORMODAL',
+    loading: 'LOADING',
+    hitsReset: 'HITSRESET',
+  };
 
-    if (prevState.page < this.state.page) {
-      this.findPicture();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  function reducer(state, action) {
+    const { type, payload } = action;
+    switch (type) {
+      case constantTypes.value:
+        return { ...state, value: payload };
+      case constantTypes.page:
+        return { ...state, page: payload };
+      case constantTypes.hitsReset:
+        return { ...state, hits: [] };
+      case constantTypes.hits:
+        return { ...state, hits: [...state.hits, ...payload] };
+      case constantTypes.isOpen:
+        return { ...state, isOpen: payload };
+      case constantTypes.imageForModal:
+        return { ...state, imageForModal: payload };
+      case constantTypes.loading:
+        return { ...state, loading: payload };
+      default:
+        return;
     }
   }
 
-  findPicture = async () => {
-    const query = this.state.value;
-    api.page = this.state.page;
-    this.setState({
-      loading: true,
-    });
+  useEffect(() => {
+    findPicture();
+  }, [state.value, state.page]);
+
+  const findPicture = async () => {
+    const query = state.value;
+    api.page = state.page;
+    dispatch({ type: constantTypes.loading, payload: true });
+
     await api.fetchPicturesBySearchQuery(query).then(res => {
-      this.setState(prev => ({
-        hits: [...prev.hits, ...res],
-        loading: false,
-      }));
+      dispatch({ type: constantTypes.hits, payload: res });
+      dispatch({ type: constantTypes.loading, payload: false });
       return res;
     });
   };
 
-  onSubmit = param => {
-    this.setState({
-      value: param,
-      page: 1,
-      hits: [],
+  const onSubmit = param => {
+    dispatch({
+      type: constantTypes.value,
+      payload: param,
+    });
+
+    dispatch({
+      type: constantTypes.page,
+      payload: 1,
+    });
+
+    dispatch({
+      type: constantTypes.hitsReset,
     });
   };
 
-  openModal = (e, index) => {
+  const openModal = (e, index) => {
     if (e) {
-      this.setState({
-        isOpen: true,
-        imageForModal: { src: e.target.dataset.src, alt: e.target.alt },
+      dispatch({ type: constantTypes.isOpen, payload: true });
+      dispatch({
+        type: constantTypes.imageForModal,
+        payload: { src: e.target.dataset.src, alt: e.target.alt },
       });
       return;
     }
 
     if (index || index === 0) {
-      const object = this.state.hits[index];
-      this.setState({
-        imageForModal: { src: object.largeImageURL, alt: object.tags },
+      const object = state.hits[index];
+      dispatch({
+        type: constantTypes.imageForModal,
+        payload: { src: object.largeImageURL, alt: object.tags },
       });
       return;
     }
   };
 
-  nextImage = () => {
-    const elementIndex = this.state.hits.findIndex(
-      el => el.largeImageURL === this.state.imageForModal.src
+  const nextImage = () => {
+    const elementIndex = state.hits.findIndex(
+      el => el.largeImageURL === state.imageForModal.src
     );
 
-    if (elementIndex !== this.state.hits.length - 1) {
-      this.openModal(false, elementIndex + 1);
+    if (elementIndex !== state.hits.length - 1) {
+      openModal(false, elementIndex + 1);
     } else {
-      this.openModal(false, 0);
+      openModal(false, 0);
     }
   };
 
-  prevImage = () => {
-    const elementIndex = this.state.hits.findIndex(
-      el => el.largeImageURL === this.state.imageForModal.src
+  const prevImage = () => {
+    const elementIndex = state.hits.findIndex(
+      el => el.largeImageURL === state.imageForModal.src
     );
 
     if (elementIndex !== 0) {
-      this.openModal(false, elementIndex - 1);
+      openModal(false, elementIndex - 1);
     } else {
-      this.openModal(false, this.state.hits.length - 1);
+      openModal(false, state.hits.length - 1);
     }
   };
 
-  closeModal = () => {
-    this.setState({
-      isOpen: false,
-    });
+  const closeModal = () => {
+    dispatch({ type: constantTypes.isOpen, payload: false });
   };
 
-  loadMore = () => {
-    this.setState(prev => {
-      return { page: prev.page + 1 };
-    });
+  const loadMore = () => {
+    dispatch({ type: constantTypes.page, payload: state.page + 1 });
   };
 
-  render() {
-    return (
-      <>
-        <Searchbar onSubmit={this.onSubmit} />
-        <ImageGallery images={this.state.hits} openModal={this.openModal} />
-        {this.state.isOpen ? (
-          <Modal
-            image={this.state.imageForModal}
-            closeModal={this.closeModal}
-            nextImage={this.nextImage}
-            prevImage={this.prevImage}
-          />
-        ) : null}
-        {api.totalHits <= this.state.page * 12 ? null : (
-          <Button onClick={this.loadMore} />
-        )}
-        {this.state.loading && <Loader />}
-      </>
-    );
-  }
+  return (
+    <>
+      <Searchbar onSubmit={onSubmit} />
+      <ImageGallery images={state.hits} openModal={openModal} />
+      {state.isOpen ? (
+        <Modal
+          image={state.imageForModal}
+          closeModal={closeModal}
+          nextImage={nextImage}
+          prevImage={prevImage}
+        />
+      ) : null}
+      {api.totalHits <= state.page * 12 ? null : <Button onClick={loadMore} />}
+      {state.loading && <Loader />}
+    </>
+  );
 }
-
-export default App;

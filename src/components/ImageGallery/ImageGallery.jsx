@@ -6,7 +6,7 @@ const ImageGallery = props => {
   return (
     <ul className={s.gallery}>
       {images.map(el => (
-        <ImageGalleryItem key={el.id} item={el} openModal={openModal} />
+        <ImageGalleryItem item={el} openModal={openModal} />
       ))}
     </ul>
   );
