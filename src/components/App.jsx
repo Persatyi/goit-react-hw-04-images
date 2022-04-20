@@ -59,11 +59,12 @@ export default function App() {
     api.page = state.page;
     dispatch({ type: constantTypes.loading, payload: true });
 
-    await api.fetchPicturesBySearchQuery(query).then(res => {
-      dispatch({ type: constantTypes.hits, payload: res });
-      dispatch({ type: constantTypes.loading, payload: false });
+    const response = await api.fetchPicturesBySearchQuery(query).then(res => {
       return res;
     });
+
+    dispatch({ type: constantTypes.hits, payload: response });
+    dispatch({ type: constantTypes.loading, payload: false });
   };
 
   const onSubmit = param => {
