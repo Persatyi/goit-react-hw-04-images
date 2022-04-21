@@ -1,5 +1,6 @@
 import s from './ImageGallery.module.css';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
+import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
 
 const ImageGallery = props => {
@@ -11,6 +12,11 @@ const ImageGallery = props => {
       ))}
     </ul>
   );
+};
+
+ImageGallery.propTypes = {
+  images: PropTypes.array.isRequired,
+  openModal: PropTypes.func.isRequired,
 };
 
 export default ImageGallery;

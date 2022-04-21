@@ -1,8 +1,9 @@
 import s from './Modal.module.css';
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { HiArrowLeft, HiArrowRight } from 'react-icons/hi';
 
-export default function Modal(props) {
+const Modal = props => {
   useEffect(() => {
     window.addEventListener('keydown', closeModalByEsc);
     return () => {
@@ -37,4 +38,15 @@ export default function Modal(props) {
       </div>
     </div>
   );
-}
+};
+
+Modal.propTypes = {
+  image: PropTypes.shape({
+    src: PropTypes.string,
+    alt: PropTypes.string,
+  }).isRequired,
+  nextImage: PropTypes.func.isRequired,
+  prevImage: PropTypes.func.isRequired,
+};
+
+export default Modal;

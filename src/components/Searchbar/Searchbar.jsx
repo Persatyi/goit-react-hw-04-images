@@ -1,8 +1,9 @@
 import s from './Searchbar.module.css';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { FcSearch } from 'react-icons/fc';
 
-export default function Searchbar(props) {
+const Searchbar = props => {
   const [value, setValue] = useState('');
 
   const getValue = e => {
@@ -34,4 +35,10 @@ export default function Searchbar(props) {
       </form>
     </header>
   );
-}
+};
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default Searchbar;
