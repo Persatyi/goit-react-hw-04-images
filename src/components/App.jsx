@@ -6,6 +6,16 @@ import Button from 'components/Button/Button';
 import api from 'components/Services/pictureApi';
 import Loader from 'components/Loader/Loader';
 
+const constantTypes = {
+  value: 'VALUE',
+  page: 'PAGE',
+  hits: 'HITS',
+  isOpen: 'ISOPEN',
+  imageForModal: 'IMAGEFORMODAL',
+  loading: 'LOADING',
+  hitsReset: 'HITSRESET',
+};
+
 export default function App() {
   const initialState = {
     value: '',
@@ -14,16 +24,6 @@ export default function App() {
     isOpen: false,
     imageForModal: { src: '', alt: '' },
     loading: false,
-  };
-
-  const constantTypes = {
-    value: 'VALUE',
-    page: 'PAGE',
-    hits: 'HITS',
-    isOpen: 'ISOPEN',
-    imageForModal: 'IMAGEFORMODAL',
-    loading: 'LOADING',
-    hitsReset: 'HITSRESET',
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -46,7 +46,7 @@ export default function App() {
       case constantTypes.loading:
         return { ...state, loading: payload };
       default:
-        return;
+        return state;
     }
   }
 
@@ -70,7 +70,7 @@ export default function App() {
   const onSubmit = param => {
     dispatch({
       type: constantTypes.value,
-      payload: param,
+      payload: param.value,
     });
 
     dispatch({

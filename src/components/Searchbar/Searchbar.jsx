@@ -20,7 +20,11 @@ export default function Searchbar(props) {
         </button>
 
         <input
-          onChange={e => setValue({ value: e.target.value.trim() })}
+          onChange={e =>
+            setValue({
+              value: e.target.value,
+            })
+          }
           className={s.input}
           type="text"
           autoComplete="off"
