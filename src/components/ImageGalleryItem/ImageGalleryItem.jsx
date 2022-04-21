@@ -2,9 +2,9 @@ import s from './ImageGalleryItem.module.css';
 
 const ImageGalleryItem = props => {
   const { item, openModal } = props;
-  const { id, largeImageURL, webformatURL, tags } = item;
+  const { largeImageURL, webformatURL, tags } = item;
   return (
-    <li className={s.galleryItem} onClick={openModal} key={id}>
+    <li className={s.galleryItem} onClick={openModal}>
       <img
         key={largeImageURL}
         className={s.image}
