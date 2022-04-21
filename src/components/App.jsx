@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import Searchbar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Modal from 'components/Modal/Modal';
@@ -50,11 +50,7 @@ export default function App() {
     }
   }
 
-  useEffect(() => {
-    findPicture();
-  }, [state.value, state.page]);
-
-  const findPicture = async () => {
+  const findPicture = useCallback(async () => {
     const query = state.value;
     api.page = state.page;
     dispatch({ type: constantTypes.loading, payload: true });
@@ -65,7 +61,11 @@ export default function App() {
 
     dispatch({ type: constantTypes.hits, payload: response });
     dispatch({ type: constantTypes.loading, payload: false });
-  };
+  }, [state.value, state.page]);
+
+  useEffect(() => {
+    findPicture();
+  }, [findPicture]);
 
   const onSubmit = param => {
     dispatch({
